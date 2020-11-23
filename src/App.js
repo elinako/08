@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import Form from "./components/Form/Form";
+import ContactList from "./components/ContactList/ContactList";
+import SearchInput from "./components/SearchInput/SearchInput";
+import { connect } from "react-redux";
+import styled from "styled-components";
+import contactsOperations from "./redux/contacts/contactsOperations";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const Container = styled.div`
+  font-family: sans-serif;
+  font-size: 16px;
+`;
+
+class App extends Component {
+  componentDidMount = () => {
+    this.props.onFetchContacts();
+  };
+
+  render() {
+    return (
+      <Container>
+        <Form />
+        {this.props.length > 1 && <SearchInput />}
+        <ContactList />
+      </Container>
+    );
+  }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  const contacts = state.contacts.items.length;
+  return {
+    length: contacts,
+  };
+};
+
+const mapDispatchToProps = {
+  onFetchContacts: contactsOperations.fetchContacts,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
